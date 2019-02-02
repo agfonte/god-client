@@ -4,7 +4,8 @@ import { Card, Row, Button } from "react-bootstrap";
 class StoredPlayers extends Component {
   state = {
     users: [],
-    handleUserChange: this.props.handleUserChange
+    handleUserChange: this.props.handleUserChange,
+    handlers: []
   };
 
   componentWillMount() {
@@ -12,10 +13,9 @@ class StoredPlayers extends Component {
     axios
       .get("http://localhost:4000/api/users")
       .then(res_users => {
-        if (res_users.data.lenght > 0) {
-          this.handleUserChange(true);
+        if (res_users.data.users.length > 0) {
+          this.state.handleUserChange(true);
         }
-        console.log(res_users.data.users);
         this.setState({ users: res_users.data.users });
       })
       .catch(err => {
@@ -26,11 +26,11 @@ class StoredPlayers extends Component {
   render() {
     let { users } = this.state;
     return (
-      <Row className="justify-content-center align-content-center">
+      <Row className="justify-content-between">
         {users.slice(0, 4).map(user => (
           <Card
             key={user.user}
-            className={"container mb-2"}
+            className={"container mb-2 ml-2"}
             style={{ width: "auto" }}
           >
             <Card.Title className="justify-content-center">
@@ -42,7 +42,14 @@ class StoredPlayers extends Component {
                 <Card.Text>Lose: {user.stats.lose}</Card.Text>
               </Row>
               <Row className="justify-content-center">
-                <Button>Choose</Button>
+                <Button
+                  onClick={evt => {
+                    this.handleChooseUser(user.user);
+                    evt.target.disabled = true;
+                  }}
+                >
+                  Choose
+                </Button>
               </Row>
             </Card.Body>
           </Card>
@@ -50,6 +57,9 @@ class StoredPlayers extends Component {
       </Row>
     );
   }
+  handleChooseUser = user => {
+    this.props.handleChoosePlayer(user);
+  };
 }
 
 export default StoredPlayers;

@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import "./App.css";
 import Game from "./components/Game";
-import { createContext } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 class App extends Component {
   render() {
-    const Theme = createContext( "white" );
     return (
-      <Theme.Provider>
-        <Game />
-      </Theme.Provider>
+      <Game
+        className={"justify-content-center align-content-center"}
+        styles={{ position: "relative", display:"flex" }}
+      />
     );
   }
 }

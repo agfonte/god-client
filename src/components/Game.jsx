@@ -1,15 +1,25 @@
 import React, { Component } from "react";
 import Welcome from "./Welcome";
-import NewUsersForm from "./NewUsersForm";
-import Settings from "./Settings";
+import NewUsersForm from "./NewUsers";
+import Settings from "./Settings/Settings";
 import { Button, Container, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Battlefield from "./Battlefield";
+import Battlefield from "./BattleField/Battlefield";
+
 class Game extends Component {
-  state = { selectPlayers: true };
+  state = { selectPlayers: false, users: false };
+
+  handleUserChange = u => {
+    this.setState({ users: u });
+    console.log(u);
+  };
+
   render() {
     let welcomeScreen = undefined;
     let battlefield = undefined;
+    let message = "Enter Player's Names ".concat(
+      this.state.users ? "or choose one of the list" : ""
+    );
     if (this.state.selectPlayers) {
       welcomeScreen = (
         <Container className="center">
@@ -17,7 +27,10 @@ class Game extends Component {
             <Welcome game={"GoD | Game of Drones"} />
           </Row>
           <Row className="justify-content-center">
-            <NewUsersForm />
+            <h3 style={{ color: "white" }}>{message}</h3>
+          </Row>
+          <Row className="justify-content-center">
+            <NewUsersForm handleUserChange={this.handleUserChange} />
           </Row>
           <Row className="justify-content-center mt-2">
             <Button onClick={e => this.setState({ selectPlayers: false })}>
@@ -30,7 +43,11 @@ class Game extends Component {
         </Container>
       );
     } else {
-      battlefield = <Battlefield>Battle</Battlefield>;
+      battlefield = (
+        <Battlefield user1={"agfonte"} user2={"licuevas"}>
+          Battle
+        </Battlefield>
+      );
     }
     return (
       <div>

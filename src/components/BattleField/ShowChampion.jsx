@@ -5,7 +5,7 @@ export default function ShowChampion(props) {
     <Row>
       <h1>The Winner of the Championship is {props.winner}</h1>
       <h2>Congratulations!!!</h2>
-      <Button>Play again?</Button>
+      <Button onClick={props.playAgain}>Play again?</Button>
     </Row>
   );
 }

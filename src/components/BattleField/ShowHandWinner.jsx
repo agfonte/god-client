@@ -9,7 +9,7 @@ export default function ShowHandWinner(props) {
           The is no Winner of the Round {props.round}. The result was a tie.
         </h1>
         <h2>
-          {props.handUser1} + " " {props.handUser2}
+          {props.handUser1}  {props.handUser2}
         </h2>
         <h1>Get ready for the next round.</h1>
         <Button onClick={props.nextRound}>Next Round</Button>

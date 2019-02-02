@@ -45,7 +45,7 @@ class Battlefield extends Component {
     let { user1, user2 } = this.props;
     const { resolve } = this.state;
     if (finished) {
-      return <ShowChampion />;
+      return <ShowChampion playAgain={this.playAgain} />;
     }
     if (resolve) {
       return (
@@ -105,7 +105,6 @@ class Battlefield extends Component {
   resolveBattle = () => {
     let { stats, currentHandP1, currentHandP2, user1, user2 } = this.state;
     const win = this.resolveHandWin(currentHandP1, currentHandP2);
-    console.log(this.state);
     let winner;
     if (win === 0) {
       stats.user1++;
@@ -118,11 +117,12 @@ class Battlefield extends Component {
     }
     if (stats.user1 === 3 || stats.user2 === 3) {
       return this.endBattle();
+    } else {
+      this.setState({
+        stats: stats,
+        winner: winner
+      });
     }
-    this.setState({
-      stats: stats,
-      winner: winner
-    });
   };
   resolveHandWin = (currentHandP1, currentHandP2) => {
     let { kills } = this.state;
@@ -142,13 +142,31 @@ class Battlefield extends Component {
         }
       }
     }
-    return 3;
+    return 2;
   };
   endBattle = () => {
+    const axios = require("axios");
+    axios
+      .get("http://localhost:4000/api/users")
+      .then(users => {
+        console.log(users.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     let { stats, user1, user2 } = this.state;
+    console.log(stats, user1, user2);
     if (stats.user1 === 3) {
     } else {
     }
+    this.setState({
+      stats: { user1: 0, user2: 0 },
+      resolve: false,
+      finished: true,
+      currentHandP1: undefined,
+      currentHandP2: undefined,
+      winner: undefined
+    });
   };
   nextRound = () => {
     let round = this.state.round;
@@ -158,6 +176,16 @@ class Battlefield extends Component {
       resolve: false,
       currentHandP1: undefined,
       currentHandP2: undefined
+    });
+  };
+  playAgain = () => {
+    this.setState({
+      stats: { user1: 0, user2: 0 },
+      resolve: false,
+      finished: false,
+      currentHandP1: undefined,
+      currentHandP2: undefined,
+      winner: undefined
     });
   };
 }
