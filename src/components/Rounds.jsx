@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import { Container } from "react-bootstrap";
 class Round extends Component {
   state = {};
   render() {
-    return <div>Round 1</div>;
+    return <Container>Round 1</Container>;
   }
 }
 

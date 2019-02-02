@@ -2,7 +2,7 @@ import React, { Component } from "react";
 class Settings extends Component {
   state = {};
   render() {
-    return <div>Settings</div>;
+    return <div style={{ color: "white" }}>Settings</div>;
   }
 }
 

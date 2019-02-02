@@ -1,35 +1,55 @@
 import React, { Component } from "react";
-
-class Players extends Component {
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Card, Row, Button } from "react-bootstrap";
+class StoredPlayers extends Component {
   state = {
-    users: []
+    users: [],
+    handleUserChange: this.props.handleUserChange
   };
+
   componentWillMount() {
-    fetch("http://localhost:4000/api/users", { method: "GET" })
-      .then(response => response.json())
+    const axios = require("axios");
+    axios
+      .get("http://localhost:4000/api/users")
       .then(res_users => {
-        this.setState({ users: res_users["users"] });
+        if (res_users.data.lenght > 0) {
+          this.handleUserChange(true);
+        }
+        console.log(res_users.data.users);
+        this.setState({ users: res_users.data.users });
       })
       .catch(err => {
         return <div />;
       });
   }
+
   render() {
     let { users } = this.state;
     return (
-      <ul>
-        {users.map(user => (
-          <li key={user.user}>
-            <a href="#">
-              <p>{user.user}</p>
-            </a>
-            <p>Win:{user.stats.win}</p>
-            <p>Lose:{user.stats.lose}</p>
-          </li>
+      <Row className="justify-content-center align-content-center">
+        {users.slice(0, 4).map(user => (
+          <Card
+            key={user.user}
+            className={"container mb-2"}
+            style={{ width: "auto" }}
+          >
+            <Card.Title className="justify-content-center">
+              <Card.Text className="h3">{user.user}</Card.Text>
+            </Card.Title>
+            <Card.Body>
+              <Row className="justify-content-center">
+                <Card.Text className="mr-2">Win: {user.stats.win}</Card.Text>
+                <Card.Text>Lose: {user.stats.lose}</Card.Text>
+              </Row>
+              <Row className="justify-content-center">
+                <Button>Choose</Button>
+              </Row>
+            </Card.Body>
+          </Card>
         ))}
-      </ul>
+      </Row>
     );
   }
 }
 
-export default Players;
+export default StoredPlayers;

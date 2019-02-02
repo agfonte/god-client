@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import "./App.css";
 import Game from "./components/Game";
-
+import { createContext } from "react";
 class App extends Component {
   render() {
+    const Theme = createContext( "white" );
     return (
-      <div className="App">
+      <Theme.Provider>
         <Game />
-      </div>
+      </Theme.Provider>
     );
   }
 }
