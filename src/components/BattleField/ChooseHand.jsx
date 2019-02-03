@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { Row, Container, Button } from "react-bootstrap";
+import { Row, Button, Col, Container } from "react-bootstrap";
 class ChooseHand extends Component {
   render() {
     let { moves } = this.props;
-    console.log(moves);
     const chooseHand = (
-      <Container className={"justify-content-center"}>
-        <Row className={"justify-content-around"}>
+      <Container>
+        <Row className={"justify-content-center text-center"}>
           {moves.map(mov => {
             return (
-              <div key={mov}>
+              <Col
+                xs={1}
+                key={mov}
+                className={"justify-content-center text-center"}
+              >
                 <Button
                   onClick={evt => {
                     this.props.onChoose(evt, mov, this.props.user);
@@ -17,7 +20,7 @@ class ChooseHand extends Component {
                 >
                   {mov.toUpperCase()}
                 </Button>
-              </div>
+              </Col>
             );
           })}
         </Row>

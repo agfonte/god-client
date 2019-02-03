@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Row, Container } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ChooseHand from "./ChooseHand";
 import ShowHandWinner from "./ShowHandWinner";
 import ShowChampion from "./ShowChampion";
-class Battlefield extends Component {
+class BattleField extends Component {
   state = {
     currentPlayer: this.props.user1,
     winner: undefined,
@@ -20,7 +20,8 @@ class Battlefield extends Component {
     currentHandP1: undefined,
     currentHandP2: undefined,
     moves: [],
-    kills: {}
+    kills: {},
+    style: "red"
   };
   componentWillMount() {
     const axios = require("axios");
@@ -43,58 +44,72 @@ class Battlefield extends Component {
   render() {
     let { round, currentPlayer, moves, finished } = this.state;
     let { user1, user2 } = this.props;
-    const { resolve } = this.state;
     if (finished) {
       return <ShowChampion playAgain={this.playAgain} />;
     }
-    if (resolve) {
-      return (
+    return (
+      <div>
+        <Row className={"justify-content-center"}>
+          <h1 style={{ color: "white", fontSize: "4rem" }}>
+            ---Round {round}---
+          </h1>
+        </Row>
+        <Row className={"justify-content-center"}>
+          <h2 style={{ color: "white" }}>
+            <Row className={"justify-content-center"}>
+              <p style={{ color: "red" }}>{user1}</p>
+            </Row>
+            <Row className={"justify-content-center"}>
+              <strong>
+                <i>vs</i>
+              </strong>
+            </Row>
+            <Row className={"justify-content-center"}>
+              <p style={{ color: "green" }}>{user2}</p>
+            </Row>
+          </h2>
+        </Row>
+        <Row className={"justify-content-center"}>
+          <h3 style={{ color: "white" }} className={"mr-2"}>
+            Choose your hand{" "}
+          </h3>
+          <h3 style={{ color: this.state.style }}>
+            {this.state.currentPlayer}
+          </h3>
+        </Row>
+        <ChooseHand
+          user={currentPlayer}
+          round={round}
+          moves={moves}
+          onChoose={this.onChoose}
+        />
         <ShowHandWinner
           winner={this.state.winner}
           round={round}
           nextRound={this.nextRound}
-          handUser1={this.state.handUser1}
-          handUser2={this.state.handUser2}
+          handUser1={this.state.currentHandP1}
+          handUser2={this.state.currentHandP2}
+          show={this.state.resolve}
+          handleCloseModal={this.nextRound}
         />
-      );
-    } else {
-      return (
-        <Container>
-          <Row className={"justify-content-center"}>
-            <h1>Round {round}</h1>
-          </Row>
-          <Row className={"justify-content-center"}>
-            <h2>
-              {user1 + " "}
-              <strong>
-                <i>vs</i>
-              </strong>
-              {" " + user2}
-            </h2>
-          </Row>
-          <Row className={"justify-content-center"}>
-            <h3>Choose your hand {this.state.currentPlayer}</h3>
-          </Row>
-          <ChooseHand
-            user={currentPlayer}
-            round={round}
-            moves={moves}
-            onChoose={this.onChoose}
-          />
-        </Container>
-      );
-    }
+      </div>
+    );
   }
   onChoose = (evt, mov, user) => {
     let { user1, user2 } = this.props;
     if (user === user1) {
-      this.setState({ currentHandP1: mov, currentPlayer: user2 });
+      this.setState({
+        currentHandP1: mov,
+        currentPlayer: user2,
+        style: "green"
+      });
     } else {
       this.setState(
         {
           currentHandP2: mov,
           currentPlayer: user1,
-          resolve: true
+          resolve: true,
+          style: "red"
         },
         () => {
           this.resolveBattle();
@@ -165,7 +180,8 @@ class Battlefield extends Component {
       finished: true,
       currentHandP1: undefined,
       currentHandP2: undefined,
-      winner: undefined
+      winner: undefined,
+      round: 1
     });
   };
   nextRound = () => {
@@ -190,4 +206,4 @@ class Battlefield extends Component {
   };
 }
 
-export default Battlefield;
+export default BattleField;

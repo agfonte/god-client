@@ -1,28 +1,41 @@
 import React from "react";
-import { Row, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 export default function ShowHandWinner(props) {
   console.log(props.handUser1);
+  let headermessage;
   if (props.winner === undefined) {
-    return (
-      <Row>
-        <h1>
-          The is no Winner of the Round {props.round}. The result was a tie.
-        </h1>
-        <h2>
-          {props.handUser1}  {props.handUser2}
-        </h2>
-        <h1>Get ready for the next round.</h1>
-        <Button onClick={props.nextRound}>Next Round</Button>
-      </Row>
+    headermessage = (
+      <div className={"text-center"}>
+        <p>
+          There is no Winner of the Round {props.round}.The result was a tie.
+        </p>
+      </div>
+    );
+  } else {
+    headermessage = (
+      <div className={"text-center"}>
+        <h3>
+          Congratulations <strong>{props.winner}</strong>!!!
+        </h3>
+        <h4>You are the winner of the Round {props.round}</h4>
+        <h5>
+          You won <strong>{props.handUser1}</strong> <i>vs</i>{" "}
+          <strong>{props.handUser2}</strong>
+        </h5>
+      </div>
     );
   }
   return (
-    <Row>
-      <h1>
-        The Winner of the Round {props.round} is {props.winner}
-        Congratulations!!! and get ready for the next round.
-        <Button onClick={props.nextRound}>Next Round</Button>
-      </h1>
-    </Row>
+    <Modal centered show={props.show} onHide={props.handleCloseModal}>
+      <Modal.Header>
+        <Modal.Title>Round {props.round} Finished.</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{headermessage}</Modal.Body>
+      <Modal.Footer>
+        <Button variant={"primary"} onClick={props.handleCloseModal}>
+          Next Round
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }

@@ -3,9 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Row, Button } from "react-bootstrap";
 class StoredPlayers extends Component {
   state = {
-    users: [],
-    handleUserChange: this.props.handleUserChange,
-    handlers: []
+    users: []
   };
 
   componentWillMount() {
@@ -13,10 +11,8 @@ class StoredPlayers extends Component {
     axios
       .get("http://localhost:4000/api/users")
       .then(res_users => {
-        if (res_users.data.users.length > 0) {
-          this.state.handleUserChange(true);
-        }
         this.setState({ users: res_users.data.users });
+        this.props.handleLoadUsers(res_users.data.users);
       })
       .catch(err => {
         return <div />;
@@ -32,19 +28,27 @@ class StoredPlayers extends Component {
             key={user.user}
             className={"container mb-2 ml-2"}
             style={{ width: "auto" }}
+            bg={"light"}
           >
-            <Card.Title className="justify-content-center">
-              <Card.Text className="h3">{user.user}</Card.Text>
-            </Card.Title>
+            {/* <Card.Header>{user.user}</Card.Header> */}
             <Card.Body>
+              <Card.Title>{user.user}</Card.Title>
               <Row className="justify-content-center">
                 <Card.Text className="mr-2">Win: {user.stats.win}</Card.Text>
                 <Card.Text>Lose: {user.stats.lose}</Card.Text>
               </Row>
               <Row className="justify-content-center">
                 <Button
+                  disabled={
+                    user.user === this.props.user1 ||
+                    user.user === this.props.user2 ||
+                    (this.props.user1 !== "" &&
+                      this.props.user1 !== undefined &&
+                      this.props.user2 !== "" &&
+                      this.props.user2 !== undefined)
+                  }
                   onClick={evt => {
-                    this.handleChooseUser(user.user);
+                    this.props.handleChoosePlayer(user.user);
                     evt.target.disabled = true;
                   }}
                 >
@@ -57,9 +61,6 @@ class StoredPlayers extends Component {
       </Row>
     );
   }
-  handleChooseUser = user => {
-    this.props.handleChoosePlayer(user);
-  };
 }
 
 export default StoredPlayers;
