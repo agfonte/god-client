@@ -25,6 +25,7 @@ class NewUsers extends Component {
             user1={this.props.user1}
             user2={this.props.user2}
             handleLoadUsers={this.props.handleLoadUsers}
+            numOfPlayers={this.props.numOfPlayers}
           />
         </Row>
         <Row className="justify-content-center">

@@ -5,16 +5,29 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import BattleField from "./BattleField/BattleField";
 import SettingsButton from "./Settings/SettingsButton";
 import Settings from "./Settings/Settings";
+import { urls } from "./URL";
+import UserStats from "./BattleField/UserStats";
+const axios = require("axios");
 class Game extends Component {
   state = {
     selectPlayers: true,
     users: false,
     user1: undefined,
     user2: undefined,
+    winUser1: 0,
+    winUser2: 0,
     show: false,
-    settings: true
+    settings: false,
+    numOfPlayers: 5
   };
-
+  componentWillMount() {
+    axios.get(urls.settings).then(data => {
+      this.setState({ numOfPlayers: Number(data.data.top) });
+    });
+  }
+  handleNumOfPlayers = value => {
+    this.setState({ numOfPlayers: value });
+  };
   handleUserChange = (user1, user2) => {
     if (user1 !== undefined) {
       this.setState({ user1: user1 });
@@ -27,7 +40,18 @@ class Game extends Component {
   render() {
     let welcomeScreen = undefined;
     let battlefield = undefined;
-    let settings = <Settings />;
+    let settings = (
+      <Settings
+        handleChangeNumber={value => {
+          axios.put(urls.settings, { top: value }).then(() => {
+            this.setState({ numOfPlayers: value });
+          });
+        }}
+        handleCloseModal={() => {
+          this.setState({ settings: false });
+        }}
+      />
+    );
     let message = "Enter Player's Names ".concat(
       this.state.users ? "or choose one of the list" : ""
     );
@@ -55,6 +79,7 @@ class Game extends Component {
               handleLoadUsers={b => this.setState({ users: b })}
               user1={this.state.user1}
               user2={this.state.user2}
+              numOfPlayers={this.state.numOfPlayers}
             />
           </Row>
           <Row className="justify-content-center mt-2">
@@ -85,18 +110,39 @@ class Game extends Component {
       battlefield = (
         <Container>
           <Row>
-            <Col md={1}>
-              <h1>{this.state.user1}</h1>
+            <Col md={2}>
+              <Container>
+                <UserStats
+                  user={this.state.user1}
+                  win={this.state.winUser1}
+                  lose={this.state.winUser2}
+                />
+              </Container>
             </Col>
-            <Col md={10}>
+            <Col md={8}>
               <BattleField
                 user1={this.state.user1}
                 user2={this.state.user2}
+                onRoundWin={wuser => {
+                  let { winUser1, winUser2 } = this.state;
+                  if (wuser === this.state.user1) {
+                    console.log(wuser, winUser1, winUser2);
+                    this.setState({ winUser1: winUser1 + 1 });
+                  } else {
+                    this.setState({ winUser2: winUser2 + 1 });
+                  }
+                }}
                 back={this.homeScreen}
               />
             </Col>
-            <Col md={1}>
-              <h1>{this.state.user2}</h1>
+            <Col md={2}>
+              <Container>
+                <UserStats
+                  user={this.state.user2}
+                  win={this.state.winUser2}
+                  lose={this.state.winUser1}
+                />
+              </Container>
             </Col>
           </Row>
         </Container>
@@ -132,9 +178,8 @@ class Game extends Component {
       this.setState({ show: true });
       return false;
     } else {
-      const axios = require("axios");
       await axios
-        .get("http://localhost:4000/api/users")
+        .get(urls.users)
         .then(users => {
           let exist = { user1: false, user2: false };
           for (let user in users.data.users) {
@@ -146,7 +191,7 @@ class Game extends Component {
             }
           }
           if (!exist.user1) {
-            axios.post("http://localhost:4000/api/users", {
+            axios.post(urls.users, {
               user: user1,
               stats: {
                 win: 0,
@@ -156,7 +201,7 @@ class Game extends Component {
             });
           }
           if (!exist.user2) {
-            axios.post("http://localhost:4000/api/users", {
+            axios.post(urls.users, {
               user: user2,
               stats: {
                 win: 0,

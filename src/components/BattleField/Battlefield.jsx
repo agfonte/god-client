@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row } from "react-bootstrap";
+import { Row, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ChooseHand from "./ChooseHand";
 import ShowHandWinner from "./ShowHandWinner";
@@ -24,7 +24,7 @@ class BattleField extends Component {
     kills: {},
     style: "red"
   };
-  componentWillMount() {
+  componentDidMount() {
     const axios = require("axios");
     axios
       .get(urls.moves)
@@ -46,7 +46,7 @@ class BattleField extends Component {
     let { round, currentPlayer, moves, finished } = this.state;
     let { user1, user2 } = this.props;
     return (
-      <div>
+      <Container>
         <Row className={"justify-content-center"}>
           <h1 style={{ color: "white", fontSize: "4rem" }}>
             ---Round {round}---
@@ -75,12 +75,14 @@ class BattleField extends Component {
             {this.state.currentPlayer}
           </h3>
         </Row>
-        <ChooseHand
-          user={currentPlayer}
-          round={round}
-          moves={moves}
-          onChoose={this.onChoose}
-        />
+        <Row>
+          <ChooseHand
+            user={currentPlayer}
+            round={round}
+            moves={moves}
+            onChoose={this.onChoose}
+          />
+        </Row>
         <ShowHandWinner
           winner={this.state.winner}
           round={round}
@@ -96,10 +98,10 @@ class BattleField extends Component {
           homeScreen={this.props.back}
         />
         ;
-      </div>
+      </Container>
     );
   }
-  onChoose = (evt, mov, user) => {
+  onChoose = (mov, user) => {
     let { user1, user2 } = this.props;
     if (user === user1) {
       this.setState({
@@ -128,9 +130,11 @@ class BattleField extends Component {
     if (win === 0) {
       stats.user1++;
       winner = user1;
+      this.props.onRoundWin(user1);
     } else if (win === 1) {
       stats.user2++;
       winner = user2;
+      this.props.onRoundWin(user2);
     } else {
       winner = undefined;
     }
@@ -182,10 +186,10 @@ class BattleField extends Component {
         against: user2
       })
       .then(res => {
-        console.log(res);
+        // console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
       });
     axios
       .put(urls.users, {
@@ -195,10 +199,10 @@ class BattleField extends Component {
         against: user1
       })
       .then(res => {
-        console.log(res);
+        // console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
       });
     this.setState({
       stats: { user1: 0, user2: 0 },

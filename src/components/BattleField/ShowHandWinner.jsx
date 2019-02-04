@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
 export default function ShowHandWinner(props) {
-  console.log(props.handUser1);
   let headermessage;
   if (props.winner === undefined) {
     headermessage = (

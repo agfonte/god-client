@@ -32,7 +32,7 @@ class StoredPlayers extends Component {
               (usr1.stats.win + usr1.stats.lose)
             );
           })
-          .slice(0, 5)
+          .slice(0, this.props.numOfPlayers)
           .map(user => (
             <Card
               key={user.user}
@@ -40,7 +40,6 @@ class StoredPlayers extends Component {
               style={{ width: "auto" }}
               bg={"light"}
             >
-              {/* <Card.Header>{user.user}</Card.Header> */}
               <Card.Body>
                 <Card.Title>{user.user}</Card.Title>
                 <Row className="justify-content-center">
