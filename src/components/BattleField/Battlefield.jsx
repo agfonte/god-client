@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ChooseHand from "./ChooseHand";
 import ShowHandWinner from "./ShowHandWinner";
 import ShowChampion from "./ShowChampion";
+import { urls } from "../URL";
 class BattleField extends Component {
   state = {
     currentPlayer: this.props.user1,
@@ -26,7 +27,7 @@ class BattleField extends Component {
   componentWillMount() {
     const axios = require("axios");
     axios
-      .get("http://localhost:4000/api/moves")
+      .get(urls.moves)
       .then(resmoves => {
         let m = resmoves.data.moves;
         let set = new Set();
@@ -44,9 +45,6 @@ class BattleField extends Component {
   render() {
     let { round, currentPlayer, moves, finished } = this.state;
     let { user1, user2 } = this.props;
-    if (finished) {
-      return <ShowChampion playAgain={this.playAgain} />;
-    }
     return (
       <div>
         <Row className={"justify-content-center"}>
@@ -86,12 +84,18 @@ class BattleField extends Component {
         <ShowHandWinner
           winner={this.state.winner}
           round={round}
-          nextRound={this.nextRound}
           handUser1={this.state.currentHandP1}
           handUser2={this.state.currentHandP2}
           show={this.state.resolve}
           handleCloseModal={this.nextRound}
         />
+        <ShowChampion
+          playAgain={this.playAgain}
+          show={finished}
+          winner={this.state.winner}
+          homeScreen={this.props.back}
+        />
+        ;
       </div>
     );
   }
@@ -131,7 +135,15 @@ class BattleField extends Component {
       winner = undefined;
     }
     if (stats.user1 === 3 || stats.user2 === 3) {
-      return this.endBattle();
+      this.setState(
+        {
+          winner
+        },
+        () => {
+          this.endBattle();
+        }
+      );
+      return;
     } else {
       this.setState({
         stats: stats,
@@ -161,26 +173,39 @@ class BattleField extends Component {
   };
   endBattle = () => {
     const axios = require("axios");
+    let { stats, user1, user2 } = this.state;
     axios
-      .get("http://localhost:4000/api/users")
-      .then(users => {
-        console.log(users.data);
+      .put(urls.users, {
+        name: user1,
+        win: stats.user1,
+        lose: stats.user2,
+        against: user2
+      })
+      .then(res => {
+        console.log(res);
       })
       .catch(err => {
         console.log(err);
       });
-    let { stats, user1, user2 } = this.state;
-    console.log(stats, user1, user2);
-    if (stats.user1 === 3) {
-    } else {
-    }
+    axios
+      .put(urls.users, {
+        name: user2,
+        win: stats.user2,
+        lose: stats.user1,
+        against: user1
+      })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     this.setState({
       stats: { user1: 0, user2: 0 },
       resolve: false,
       finished: true,
       currentHandP1: undefined,
       currentHandP2: undefined,
-      winner: undefined,
       round: 1
     });
   };

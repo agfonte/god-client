@@ -8,11 +8,7 @@ class ChooseHand extends Component {
         <Row className={"justify-content-center text-center"}>
           {moves.map(mov => {
             return (
-              <Col
-                xs={1}
-                key={mov}
-                className={"justify-content-center text-center"}
-              >
+              <Col xs={1} key={mov} className={"text-center"}>
                 <Button
                   onClick={evt => {
                     this.props.onChoose(evt, mov, this.props.user);
