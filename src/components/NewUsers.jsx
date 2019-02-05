@@ -8,6 +8,7 @@ import {
   Container
 } from "react-bootstrap";
 import StoredPlayers from "./StoredPlayers";
+import PropTypes from "prop-types";
 class NewUsers extends Component {
   handleChoosePlayer = p => {
     if (this.props.user1 === undefined || this.props.user1 === "") {
@@ -70,5 +71,13 @@ class NewUsers extends Component {
     );
   }
 }
+
+NewUsers.propTypes = {
+  user1: PropTypes.string.isRequired,
+  user2: PropTypes.string.isRequired,
+  handleUserChange: PropTypes.func.isRequired,
+  handleLoadUsers: PropTypes.func.isRequired,
+  numOfPlayers: PropTypes.number.isRequired
+};
 
 export default NewUsers;

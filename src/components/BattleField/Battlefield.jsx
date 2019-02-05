@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Row, Container } from "react-bootstrap";
+import PropTypes from "prop-types";
+import { Row, Container, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ChooseHand from "./ChooseHand";
 import ShowHandWinner from "./ShowHandWinner";
@@ -40,66 +41,6 @@ class BattleField extends Component {
       .catch(err => {
         return <div />;
       });
-  }
-
-  render() {
-    let { round, currentPlayer, moves, finished } = this.state;
-    let { user1, user2 } = this.props;
-    return (
-      <Container>
-        <Row className={"justify-content-center"}>
-          <h1 style={{ color: "white", fontSize: "4rem" }}>
-            ---Round {round}---
-          </h1>
-        </Row>
-        <Row className={"justify-content-center"}>
-          <h2 style={{ color: "white" }}>
-            <Row className={"justify-content-center"}>
-              <p style={{ color: "red" }}>{user1}</p>
-            </Row>
-            <Row className={"justify-content-center"}>
-              <strong>
-                <i>vs</i>
-              </strong>
-            </Row>
-            <Row className={"justify-content-center"}>
-              <p style={{ color: "green" }}>{user2}</p>
-            </Row>
-          </h2>
-        </Row>
-        <Row className={"justify-content-center"}>
-          <h3 style={{ color: "white" }} className={"mr-2"}>
-            Choose your hand{" "}
-          </h3>
-          <h3 style={{ color: this.state.style }}>
-            {this.state.currentPlayer}
-          </h3>
-        </Row>
-        <Row>
-          <ChooseHand
-            user={currentPlayer}
-            round={round}
-            moves={moves}
-            onChoose={this.onChoose}
-          />
-        </Row>
-        <ShowHandWinner
-          winner={this.state.winner}
-          round={round}
-          handUser1={this.state.currentHandP1}
-          handUser2={this.state.currentHandP2}
-          show={this.state.resolve}
-          handleCloseModal={this.nextRound}
-        />
-        <ShowChampion
-          playAgain={this.playAgain}
-          show={finished}
-          winner={this.state.winner}
-          homeScreen={this.props.back}
-        />
-        ;
-      </Container>
-    );
   }
   onChoose = (mov, user) => {
     let { user1, user2 } = this.props;
@@ -212,6 +153,7 @@ class BattleField extends Component {
       currentHandP2: undefined,
       round: 1
     });
+    this.props.onBattleEnded();
   };
   nextRound = () => {
     let round = this.state.round;
@@ -233,6 +175,89 @@ class BattleField extends Component {
       winner: undefined
     });
   };
+  render() {
+    let { round, currentPlayer, moves, finished } = this.state;
+    let { user1, user2 } = this.props;
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <input
+              type={"image"}
+              id={"exit-img"}
+              src={"./back.png"}
+              alt={"Home icon"}
+              style={{
+                height: "40px",
+                width: "40px",
+                background: "transparent"
+              }}
+              onClick={this.props.back}
+            />
+          </Col>
+        </Row>
+        <Row className={"justify-content-center"}>
+          <h1 style={{ color: "white", fontSize: "4rem" }}>Round {round}</h1>
+        </Row>
+        <Row className={"justify-content-center"}>
+          <h2 style={{ color: "white" }}>
+            <Row className={"justify-content-center"}>
+              <p style={{ color: "red" }}>{user1}</p>
+            </Row>
+            <Row className={"justify-content-center"}>
+              <strong>
+                <i>vs</i>
+              </strong>
+            </Row>
+            <Row className={"justify-content-center"}>
+              <p style={{ color: "green" }}>{user2}</p>
+            </Row>
+          </h2>
+        </Row>
+        <Row className={"justify-content-center"}>
+          <h3 style={{ color: "white" }} className={"mr-2"}>
+            Choose your hand{" "}
+          </h3>
+          <h3 style={{ color: this.state.style }}>
+            {this.state.currentPlayer}
+          </h3>
+        </Row>
+        <Row>
+          <ChooseHand
+            user={currentPlayer}
+            round={round}
+            moves={moves}
+            onChoose={this.onChoose}
+          />
+        </Row>
+        <ShowHandWinner
+          winner={this.state.winner}
+          round={round}
+          handUser1={this.state.currentHandP1}
+          handUser2={this.state.currentHandP2}
+          show={this.state.resolve}
+          handleCloseModal={this.nextRound}
+        />
+        <ShowChampion
+          playAgain={this.playAgain}
+          show={finished}
+          winner={this.state.winner}
+          homeScreen={this.props.back}
+        />
+        ;
+      </Container>
+    );
+  }
 }
 
+BattleField.propTypes = {
+  user1: PropTypes.string,
+  user2: PropTypes.string,
+  back: PropTypes.func
+};
+BattleField.defaultProps = {
+  user1: "",
+  user2: "",
+  back: () => {}
+};
 export default BattleField;

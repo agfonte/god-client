@@ -1,29 +1,25 @@
-import React, { Component } from "react";
+import React from "react";
 import { Row, Button, Col, Container } from "react-bootstrap";
-class ChooseHand extends Component {
-  render() {
-    let { moves } = this.props;
-    const chooseHand = (
-      <Container>
-        <Row className={"justify-content-center text-center"}>
-          {moves.map(mov => {
-            return (
-              <Col key={mov} className={"text-center"}>
-                <Button
-                  onClick={evt => {
-                    this.props.onChoose(mov, this.props.user);
-                  }}
-                >
-                  {mov.toUpperCase()}
-                </Button>
-              </Col>
-            );
-          })}
-        </Row>
-      </Container>
-    );
-    return chooseHand;
-  }
+export default function ChooseHand(props) {
+  let { moves } = props;
+  const chooseHand = (
+    <Container>
+      <Row className={"justify-content-center text-center"}>
+        {moves.map(mov => {
+          return (
+            <Col key={mov} className={"text-center"}>
+              <Button
+                onClick={evt => {
+                  this.props.onChoose(mov, props.user);
+                }}
+              >
+                {mov.toUpperCase()}
+              </Button>
+            </Col>
+          );
+        })}
+      </Row>
+    </Container>
+  );
+  return chooseHand;
 }
-
-export default ChooseHand;

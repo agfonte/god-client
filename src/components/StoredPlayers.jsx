@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Row, Button } from "react-bootstrap";
+import PropTypes from "prop-types";
 import { urls } from "./URL";
 class StoredPlayers extends Component {
   state = {
@@ -71,5 +72,13 @@ class StoredPlayers extends Component {
     );
   }
 }
+
+StoredPlayers.propTypes = {
+  handleLoadUsers: PropTypes.func.isRequired,
+  handleChoosePlayer: PropTypes.func.isRequired,
+  numOfPlayers: PropTypes.number.isRequired,
+  user1: PropTypes.string.isRequired,
+  user2: PropTypes.string.isRequired
+};
 
 export default StoredPlayers;

@@ -12,8 +12,8 @@ class Game extends Component {
   state = {
     selectPlayers: true,
     users: false,
-    user1: undefined,
-    user2: undefined,
+    user1: "",
+    user2: "",
     winUser1: 0,
     winUser2: 0,
     show: false,
@@ -53,7 +53,7 @@ class Game extends Component {
       />
     );
     let message = "Enter Player's Names ".concat(
-      this.state.users ? "or choose one of the list" : ""
+      this.state.users.length !== 0 ? "or choose one of the list" : ""
     );
 
     if (this.state.selectPlayers) {
@@ -66,7 +66,6 @@ class Game extends Component {
               <SettingsButton handleSettingsClick={this.handleSettingsClick} />
             </div>
           </Row>
-          <Row className="justify-content-center" />
           <Row className="justify-content-center">
             <h2 style={{ color: "white" }}>Welcome players</h2>
           </Row>
@@ -85,9 +84,7 @@ class Game extends Component {
           <Row className="justify-content-center mt-2">
             <Button
               onClick={e => {
-                if (this.checkUsers()) {
-                  this.setState({ selectPlayers: false });
-                }
+                this.checkUsers();
               }}
             >
               Start Battle
@@ -97,7 +94,10 @@ class Game extends Component {
             <Modal.Header>
               <Modal.Title>Undefined Players</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Please fill out both player's names.</Modal.Body>
+            <Modal.Body>
+              Please fill out both player's names or check that they aren't the
+              same.{" "}
+            </Modal.Body>
             <Modal.Footer>
               <Button variant={"primary"} onClick={this.handleCloseModal}>
                 Ok
@@ -110,7 +110,7 @@ class Game extends Component {
       battlefield = (
         <Container>
           <Row>
-            <Col md={2}>
+            <Col md={3}>
               <Container>
                 <UserStats
                   user={this.state.user1}
@@ -119,23 +119,28 @@ class Game extends Component {
                 />
               </Container>
             </Col>
-            <Col md={8}>
+            <Col md={6}>
               <BattleField
                 user1={this.state.user1}
                 user2={this.state.user2}
                 onRoundWin={wuser => {
                   let { winUser1, winUser2 } = this.state;
                   if (wuser === this.state.user1) {
-                    console.log(wuser, winUser1, winUser2);
                     this.setState({ winUser1: winUser1 + 1 });
                   } else {
                     this.setState({ winUser2: winUser2 + 1 });
                   }
                 }}
+                onBattleEnded={() => {
+                  this.setState({
+                    winUser1: 0,
+                    winUser2: 0
+                  });
+                }}
                 back={this.homeScreen}
               />
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <Container>
                 <UserStats
                   user={this.state.user2}
@@ -167,18 +172,18 @@ class Game extends Component {
   handleCloseModal = () => {
     this.setState({ show: false });
   };
-  checkUsers = async () => {
+  checkUsers = () => {
     let { user1, user2 } = this.state;
     if (
       user1 === undefined ||
       user1 === "" ||
       user2 === undefined ||
-      user2 === ""
+      user2 === "" ||
+      user1 === user2
     ) {
       this.setState({ show: true });
-      return false;
     } else {
-      await axios
+      axios
         .get(urls.users)
         .then(users => {
           let exist = { user1: false, user2: false };
@@ -210,11 +215,11 @@ class Game extends Component {
               games: []
             });
           }
+          this.setState({ selectPlayers: false });
         })
         .catch(err => {
-          return false;
+          this.setState({ show: true });
         });
-      return true;
     }
   };
 }
